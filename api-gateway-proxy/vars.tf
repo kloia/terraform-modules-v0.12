@@ -23,17 +23,48 @@ variable "environment" {
 }
 
 variable "regional_certificate_arn" {
-  type = string
+  type        = string
   description = "regional certificate to be used in api gw"
 }
 
 variable "endpoint_configuration_types" {
-  type = list
+  type        = list
   description = "endpoint_configuration_types for api gw"
-  default = []
+  default     = []
 }
 
 variable "route53_zone_id" {
-  type = string
+  type        = string
   description = "zone id to create custom domain record"
+}
+
+variable "authorizer_lambda_handler" {
+  type        = string
+  description = "zone id to create custom domain record"
+}
+
+variable "authorizer_lamba_runtime" {
+  type        = string
+  description = "zone id to create custom domain record"
+}
+
+variable "lambda_source_code_key" {
+  type        = string
+  description = "zone id to create custom domain record"
+}
+
+variable "lambda_source_code_bucket" {
+  type        = string
+  description = "zone id to create custom domain record"
+}
+
+variable "vpc_id" {
+  type        = string
+  description = "vpc id to put authorizer in"
+}
+
+variable "subnet_ids" {
+  type        = list
+  description = "subnet ids to put authorizer in"
+  default     = []
 }

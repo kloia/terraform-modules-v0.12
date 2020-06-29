@@ -68,3 +68,14 @@ variable "subnet_ids" {
   description = "subnet ids to put authorizer in"
   default     = []
 }
+
+
+variable "lambda_memory_size" {
+  type = number
+  description = "lambda memory size"
+}
+
+variable "lambda_timeout" {
+  type = number
+  description = "lambda timeout"
+}

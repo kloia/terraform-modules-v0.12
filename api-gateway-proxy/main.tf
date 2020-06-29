@@ -190,9 +190,9 @@ resource "aws_lambda_function" "authorizer" {
   s3_bucket     = var.lambda_source_code_bucket
   s3_key        = var.lambda_source_code_key
 
-  memory_size   = 512
+  memory_size   = var.lambda_memory_size
 
-  timeout       = 10
+  timeout       = var.lambda_timeout
 
   vpc_config    {
     subnet_ids = var.subnet_ids

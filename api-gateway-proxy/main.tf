@@ -191,7 +191,6 @@ resource "aws_lambda_function" "authorizer" {
   s3_key        = var.lambda_source_code_key
 
   memory_size   = var.lambda_memory_size
-
   timeout       = var.lambda_timeout
 
   vpc_config    {
@@ -199,6 +198,9 @@ resource "aws_lambda_function" "authorizer" {
     security_group_ids = [aws_security_group.sg_for_lambda.id]
   }
 
+  environment {
+    variables = var.lambda_environment_variables
+  }
 }
 
 ## deployment

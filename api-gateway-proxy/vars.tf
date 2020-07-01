@@ -79,3 +79,8 @@ variable "lambda_timeout" {
   type = number
   description = "lambda timeout"
 }
+
+variable "lambda_environment_variables" {
+  type = map(string)
+  default = {}
+}

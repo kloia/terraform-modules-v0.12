@@ -206,7 +206,6 @@ resource "aws_lambda_function" "authorizer" {
 ## deployment
 
 resource "aws_api_gateway_deployment" "prod" {
-  stage_name  = "prod"
   rest_api_id = aws_api_gateway_rest_api.api.id
   description = "Deployed at ${timestamp()}"
   stage_description = "Deployed at ${timestamp()}"

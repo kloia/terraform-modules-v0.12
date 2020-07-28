@@ -208,7 +208,6 @@ resource "aws_lambda_function" "authorizer" {
 resource "aws_api_gateway_deployment" "prod" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   description = "Deployed at ${timestamp()}"
-  stage_description = "Deployed at ${timestamp()}"
 
   triggers = {
     redeployment = sha1(join(",", list(
@@ -248,10 +247,14 @@ resource "aws_api_gateway_stage" "prod" {
   stage_name    = "prod"
   rest_api_id   = aws_api_gateway_rest_api.api.id
   deployment_id = aws_api_gateway_deployment.prod.id
+
+  depends_on    = [aws_api_gateway_deployment.prod]
 }
 
 resource "aws_api_gateway_base_path_mapping" "base_path_mapping" {
   api_id      = aws_api_gateway_rest_api.api.id
   domain_name = aws_api_gateway_domain_name.domain.domain_name
   stage_name  = aws_api_gateway_stage.prod.stage_name
+
+  depends_on  = [aws_api_gateway_stage.prod]
 }

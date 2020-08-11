@@ -69,7 +69,6 @@ variable "subnet_ids" {
   default     = []
 }
 
-
 variable "lambda_memory_size" {
   type = number
   description = "lambda memory size"
@@ -83,4 +82,20 @@ variable "lambda_timeout" {
 variable "lambda_environment_variables" {
   type = map(string)
   default = {}
+}
+
+variable "metrics_enabled" {
+  type = bool
+  description = "whether to enable metrics or not"
+}
+
+variable "data_trace_enabled" {
+  type = bool
+  description = "Whether to enable data trace or not"
+}
+
+variable "logging_level" {
+  type = string
+  description = "Logging level: OFF|ERROR|INFO"
+  default = "OFF"
 }

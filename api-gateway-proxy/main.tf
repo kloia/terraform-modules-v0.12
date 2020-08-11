@@ -15,6 +15,69 @@ resource "aws_api_gateway_resource" "resource" {
   path_part   = "{proxy+}"
 }
 
+resource "aws_api_gateway_account" "account" {
+  cloudwatch_role_arn = aws_iam_role.cloudwatch.arn
+}
+
+resource "aws_iam_role" "cloudwatch" {
+  name = "api_gateway_cloudwatch_global-${var.environment}"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "apigateway.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "cloudwatch" {
+  name = "apigw-cloudwatch-role-${var.environment}"
+  role = aws_iam_role.cloudwatch.id
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:DescribeLogGroups",
+                "logs:DescribeLogStreams",
+                "logs:PutLogEvents",
+                "logs:GetLogEvents",
+                "logs:FilterLogEvents"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_api_gateway_method_settings" "general_settings" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  stage_name  = aws_api_gateway_stage.prod.stage_name
+  method_path = "*/*"
+
+  settings {
+    # Enable CloudWatch logging and metrics
+    metrics_enabled        = var.metrics_enabled
+    data_trace_enabled     = var.data_trace_enabled
+    logging_level         = var.logging_level
+  }
+}
+
 resource "aws_api_gateway_method" "method" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
   resource_id   = aws_api_gateway_resource.resource.id
@@ -208,6 +271,7 @@ resource "aws_lambda_function" "authorizer" {
 resource "aws_api_gateway_deployment" "prod" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   description = "Deployed at ${timestamp()}"
+  stage_description = "Deployed at ${timestamp()}"
 
   triggers = {
     redeployment = sha1(join(",", list(
@@ -247,14 +311,10 @@ resource "aws_api_gateway_stage" "prod" {
   stage_name    = "prod"
   rest_api_id   = aws_api_gateway_rest_api.api.id
   deployment_id = aws_api_gateway_deployment.prod.id
-
-  depends_on    = [aws_api_gateway_deployment.prod]
 }
 
 resource "aws_api_gateway_base_path_mapping" "base_path_mapping" {
   api_id      = aws_api_gateway_rest_api.api.id
   domain_name = aws_api_gateway_domain_name.domain.domain_name
   stage_name  = aws_api_gateway_stage.prod.stage_name
-
-  depends_on  = [aws_api_gateway_stage.prod]
 }

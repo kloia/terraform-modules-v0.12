@@ -1,3 +1,9 @@
+data "aws_partition" "current" {}
+
+locals {
+  sts_principal = "sts.${data.aws_partition.current.dns_suffix}"
+}
+
 data "aws_subnet_ids" "subnets" {
   vpc_id = var.vpc_id
 }
